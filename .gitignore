@@ -1,0 +1,19 @@
+# Experimental output. Runs are cheap to re-produce and expensive to review in
+# a diff; what belongs in the repository is the METHOD plus the one worked
+# example under docs/. A results tree in git also invites quietly amending a
+# published number, which is exactly what the pre-registration exists to stop.
+/results/*
+!/results/PREREGISTRATION-*.md
+
+# Per-run workspaces, recreated by the runner on every run.
+/workspaces/
+
+# Captured reference sessions point at absolute paths in one machine's
+# $DSH_HOME; another checkout must capture its own.
+/reference/reference-manifest.json
+/reference/composed-config.yml
+
+node_modules/
+__pycache__/
+*.pyc
+.DS_Store

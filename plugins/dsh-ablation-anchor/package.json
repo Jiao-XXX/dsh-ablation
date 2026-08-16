@@ -1,0 +1,16 @@
+{
+  "name": "dsh-ablation-anchor",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Ablation testbed helper: hold the model-facing tool catalog to an allowlist, either for the whole session (axis A1) or only until the session takes its first durable action (axis A1', the dsh-anchored-standard replica).",
+  "type": "module",
+  "main": "index.js",
+  "exports": {
+    ".": "./index.js",
+    "./package.json": "./package.json"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@deepseek-ai/schemastery": "^3.18.1"
+  }
+}

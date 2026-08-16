@@ -1,0 +1,16 @@
+{
+  "name": "dsh-ablation-prompt",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Ablation testbed helper: register a complete-prompt section at the host plane, reproducing the Minimal preset's `complete: true` persona where no agent plane exists.",
+  "type": "module",
+  "main": "index.js",
+  "exports": {
+    ".": "./index.js",
+    "./package.json": "./package.json"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@deepseek-ai/schemastery": "^3.18.1"
+  }
+}

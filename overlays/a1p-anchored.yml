@@ -1,0 +1,54 @@
+# A1' -- the dsh-anchored-standard replica. The control group.
+#
+# Request #1 sees the 2-tool Minimal catalog; the session promotes to the full
+# 25-tool catalog as soon as it records its first `tool/call` or
+# `assistant/message`, and stays there.
+#
+# This cell exists so the testbed can answer the question that actually matters
+# for building something better: where does one-shot anchoring land relative to
+# B0 (Minimal all the way) and B1 (Standard all the way)?
+#
+#   near B0  -> the trajectory really is fixed by request #1, anchoring
+#               captures nearly all of Minimal's advantage, and a "more
+#               essential" plugin has little headroom on this axis
+#   near B1  -> the first request does NOT fix the trajectory; the advantage is
+#               being re-earned every turn, and one-shot anchoring is treating
+#               a symptom
+#   between  -> the effect is partly trajectory and partly per-turn, and the
+#               split says how much is left for another mechanism to claim
+#
+# Without this cell, "my plugin scores X" has no scale to be read against.
+#
+# The replica is deliberately faithful to the mechanism dsh-anchored-standard
+# documents (bootstrap pair, promote on either durable event, single promotion
+# per session) and deliberately NOT faithful to its packaging: no whoami
+# self-introduction turn, and no context-source stripping. Those are separable
+# additions, and folding them in here would make this a replica of the whole
+# product rather than of its load-bearing claim.
+#
+# Expected header sequence for this cell: TWO snapshots, 2 tools then 25 --
+# `distinct_catalogs: 2` in the extractor output. One snapshot means promotion
+# never fired and the cell is really A1; three or more means something else is
+# rewriting the catalog and the cell is void.
+
+# The Minimal pair must exist before it can be allowlisted; see the same block
+# in a1-tools.yml for why this row comes back and what it costs.
+- id: tool-str-replace-editor
+  disabled: false
+
+- insert:
+    - id: ablation-anchor
+      name: dsh-ablation-anchor
+      config:
+        mode: anchored
+        promoteOn: either
+        bootstrapTools:
+          - bash
+          - str_replace_editor
+        # After promotion the editor goes back out of sight, so the resident
+        # catalog is exactly B1's 25 tools. Without this the cell would show
+        # [2, 26] and differ from the Standard baseline in TWO ways -- when it
+        # was anchored, and one permanently extra tool -- which is precisely
+        # the confound this whole testbed exists to avoid.
+        residentDeny:
+          - str_replace_editor

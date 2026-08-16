@@ -1,0 +1,33 @@
+# A3 -- context-integrity axis, held at the Minimal value.
+#
+# This is the axis dsh-anchored-standard never touches, and the only one whose
+# damage accumulates every turn instead of only at request #1.
+#
+# Standard mounts two context destroyers:
+#   compaction-basic     folds older history into an LLM-written summary
+#   tool-result-pruner   any tool result over 8192 chars keeps head 4096 +
+#                        tail 1024 and loses the MIDDLE outright
+#
+# Minimal mounts neither: at a 256k window its evidence chain stays whole for
+# the entire run. The hypothesis this cell tests is that a long task under
+# Standard is not reasoning worse -- it is reasoning over a record with holes
+# punched in it.
+#
+# The `compaction/prune` and `compaction/summary` events make the damage
+# first-class in the log, so the extractor reports exactly how many tokens each
+# cell destroyed. A cell that never crossed the threshold destroyed nothing,
+# and reports zero -- which is itself the finding that the task was too small
+# to exercise this axis.
+
+- id: compaction-basic
+  disabled: true
+- id: tool-result-pruner
+  disabled: true
+
+# `command-compact` declares `compaction` as a hard inject, so removing the
+# backend without removing the `/compact` command leaves that entry pending
+# forever and the profile refuses to boot ("1 entry did not activate"). This
+# row is bookkeeping for the axis, not a second variable: the command is a
+# human-invoked surface that a headless one-shot run never reaches.
+- id: command-compact
+  disabled: true

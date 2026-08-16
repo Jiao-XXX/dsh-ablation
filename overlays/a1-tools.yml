@@ -1,0 +1,51 @@
+# A1 -- tool-catalog axis, held at the Minimal value for the WHOLE session.
+#
+# The catalog the model sees collapses from 25 tools to the official Minimal
+# pair (`bash` + `str_replace_editor`). This is dsh-anchored-standard's decisive
+# variable, applied permanently rather than only to request #1: the comparison
+# A1 vs A1' is what separates "the first request sets the trajectory" from
+# "every request re-samples it".
+#
+# ── why this is a restriction and not a pile of `disabled: true` ────────────
+#
+# The obvious overlay -- disable the 14 tool rows -- was written first and
+# measured. It produced the right catalog and the WRONG experiment: system
+# prompt fell from 4063 to 315 characters, because in dsh a tool plugin owns
+# its own prompt sections and takes them with it when the row unmounts. That
+# overlay moves axis A2 by ~92% while claiming to move only A1, so any
+# difference it produced would be uninterpretable.
+#
+# `ctx.tools.restrict({ allow })` filters what the model is shown while every
+# plugin stays mounted and every prompt section stays registered. That is the
+# only construction under which A1 is a single-axis manipulation.
+#
+# Expected header for this cell: tool_count 2, system_chars ~4063 (the same
+# prompt as B1). If system_chars comes back near 315, the restriction did not
+# install and the overlay silently fell back to unmounting -- void the cell.
+
+# ── a declared deviation from the corrected Standard baseline ──────────────
+#
+# `_base-standard.yml` disables this row, because the official `standard`
+# preset carries `ask_user_question` where the bare base carried
+# `str_replace_editor`. But the Minimal PAIR this axis collapses to is
+# `bash` + `str_replace_editor`, so on a pure Standard base the allowlist would
+# name a tool that does not exist -- and `tools.restrict()` rejects an unknown
+# global tool name outright rather than ignoring it (verified: the cell fails
+# to boot with "unknown global tool").
+#
+# So this cell puts the editor back. The cost is one extra tool and its prompt
+# section in the PRE-restriction composition; the post-restriction catalog the
+# model sees is still exactly the Minimal pair. Declared here rather than
+# silently swapping the axis to `bash` + `edit`, which would no longer be the
+# pair dsh-anchored-standard's result is about.
+- id: tool-str-replace-editor
+  disabled: false
+
+- insert:
+    - id: ablation-anchor
+      name: dsh-ablation-anchor
+      config:
+        mode: permanent
+        bootstrapTools:
+          - bash
+          - str_replace_editor

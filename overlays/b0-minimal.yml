@@ -1,0 +1,115 @@
+# B0 -- the Minimal baseline: all five axes held at their Minimal value at once.
+#
+# This is the union of a1-tools + a2-prompt + a3-context + a4-shell + a5-fs,
+# written out as one file rather than composed from five --patch flags so that
+# the baseline cannot drift from the axis files by accident of flag ordering.
+# If an axis file changes, change this file in the same commit.
+#
+# B0 is what the admission gate compares against a real Web `minimal` session.
+# Until that comparison passes, no number produced by this matrix means what
+# its label says.
+
+# ── A1: catalog collapses to the Minimal pair ──────────────────────────────
+- id: tool-jobs
+  disabled: true
+- id: tool-skill
+  disabled: true
+- id: tool-subagent-control
+  disabled: true
+- id: tool-subagent-list-agents
+  disabled: true
+- id: tool-subagent
+  disabled: true
+- id: tool-subagent-fork
+  disabled: true
+- id: tool-workflow
+  disabled: true
+- id: tool-todo
+  disabled: true
+- id: tool-goal
+  disabled: true
+- id: tool-ralph
+  disabled: true
+- id: tool-web
+  disabled: true
+- id: plan-mode
+  disabled: true
+# Inserted by _base-standard.yml, which every cell receives first; Minimal has
+# no ask_user_question, so this cell takes it back out.
+- id: tool-ask-user
+  disabled: true
+
+# ── A2: the persona IS the whole prompt ────────────────────────────────────
+- id: agent-instructions
+  disabled: true
+
+# ── A3: nothing rewrites or deletes the record ─────────────────────────────
+- id: compaction-basic
+  disabled: true
+- id: tool-result-pruner
+  disabled: true
+# Hard inject on `compaction`; see a3-context.yml.
+- id: command-compact
+  disabled: true
+
+# ── A4: sandboxed one-shot shell out, persistent PTY in ────────────────────
+- id: tool-bash
+  disabled: true
+
+# ── A5: host sandbox fs out, bare local fs in ──────────────────────────────
+- id: tool-fs
+  disabled: true
+- id: tool-fs-search
+  disabled: true
+- id: fs-observation-policy
+  disabled: true
+- id: tool-str-replace-editor
+  disabled: true
+
+- insert:
+    # See a2-prompt.yml on why this is not @deepseek-ai/dsh-persona.
+    - id: ablation-persona
+      name: dsh-ablation-prompt
+      config:
+        text: You are a helpful software engineer assistant.
+        suppressRuntimeContext: true
+
+    - id: ablation-pty
+      name: '@deepseek-ai/dsh-terminal'
+
+    - id: ablation-terminal-bash
+      name: '@deepseek-ai/dsh-terminal-bash'
+      config:
+        timeoutMs: 300000
+
+    - id: ablation-persistent-bash
+      name: '@deepseek-ai/dsh-tool-bash-persistent'
+      config:
+        timeoutMs: 300000
+        description: |-
+          Run commands in a bash shell
+          * When invoking this tool, the contents of the "command" parameter does NOT need to be XML-escaped.
+          * You don't have access to the internet via this tool.
+          * You do have access to a mirror of common linux and python packages via apt and pip.
+          * State is persistent across command calls and discussions with the user.
+          * To inspect a particular line range of a file, e.g. lines 10-25, try 'sed -n 10,25p /path/to/the/file'.
+          * Please avoid commands that may produce a very large amount of output.
+          * Please run long lived commands in the background, e.g. 'sleep 10 &' or start a server in the background.
+
+    # See a5-fs.yml: the realm is load-bearing, not decoration -- without it
+    # `fs` collides with the host's fs-sandbox and the profile fails to boot.
+    - id: ablation-filesystem
+      name: cordis:group
+      group: true
+      isolate:
+        fs: true
+      config:
+        - id: ablation-fs-local
+          name: '@deepseek-ai/dsh-fs-local'
+          config:
+            cwd: !!js process.env.DSH_CWD ?? process.cwd()
+
+        - id: ablation-str-replace-editor
+          name: '@deepseek-ai/dsh-tool-str-replace-editor'
+          config:
+            maxOutputChars: 16000

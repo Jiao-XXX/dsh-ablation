@@ -1,0 +1,42 @@
+# A4 -- shell-form axis, held at the Minimal value.
+#
+# Standard's `bash` is a sandboxed one-shot executor: every call starts fresh,
+# and a call the sandbox refuses comes back for a justified retry, spending
+# turns on negotiation rather than work. Minimal's `bash` is a persistent PTY:
+# cwd, environment, and any activated virtualenv survive across calls.
+#
+# This is a real CAPABILITY difference, not a priming difference, which makes
+# it the axis most likely to move an ability score for boring reasons. It has
+# to be measured separately precisely so that its effect is not credited to the
+# trajectory-priming story.
+#
+# The tool NAME stays `bash` in both cells, so the catalog size does not move
+# and this axis stays independent of A1 -- but the schema and description
+# differ, which the header records. dsh-anchored-standard also adopts the
+# persistent shell, so this axis is part of its result too, uncredited.
+
+- id: tool-bash
+  disabled: true
+
+- insert:
+    - id: ablation-pty
+      name: '@deepseek-ai/dsh-terminal'
+
+    - id: ablation-terminal-bash
+      name: '@deepseek-ai/dsh-terminal-bash'
+      config:
+        timeoutMs: 300000
+
+    - id: ablation-persistent-bash
+      name: '@deepseek-ai/dsh-tool-bash-persistent'
+      config:
+        timeoutMs: 300000
+        description: |-
+          Run commands in a bash shell
+          * When invoking this tool, the contents of the "command" parameter does NOT need to be XML-escaped.
+          * You don't have access to the internet via this tool.
+          * You do have access to a mirror of common linux and python packages via apt and pip.
+          * State is persistent across command calls and discussions with the user.
+          * To inspect a particular line range of a file, e.g. lines 10-25, try 'sed -n 10,25p /path/to/the/file'.
+          * Please avoid commands that may produce a very large amount of output.
+          * Please run long lived commands in the background, e.g. 'sleep 10 &' or start a server in the background.

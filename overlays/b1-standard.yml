@@ -1,0 +1,15 @@
+# B1 -- the Standard baseline.
+#
+# Empty on purpose: every cell already receives `_base-standard.yml`, which is
+# what turns the bare `base + headless` composition into the official
+# `standard` preset. B1 adds nothing on top of that, so this file is where
+# "Standard" is defined by the ABSENCE of any axis manipulation.
+#
+# It is kept as a real file rather than a skipped cell so B1 runs through the
+# identical --patch code path as its siblings; a baseline that reached the
+# model by a different route would not be a baseline.
+#
+# Do not move the corrections from _base-standard.yml into here. They belong to
+# every cell, not to this one: an axis cell built on the uncorrected base would
+# be measuring its axis against the wrong Standard.
+[]

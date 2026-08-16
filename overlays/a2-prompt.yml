@@ -1,0 +1,37 @@
+# A2 -- prompt-completeness axis, held at the Minimal value.
+#
+# Minimal's persona is `complete: true`, which is not "a shorter prompt": it
+# structurally suppresses EVERY other prompt section -- harness identity, tool
+# guidance, plan-mode text, and any later assembly listener. Standard's prompt
+# is ~4KB of sections from a dozen contributors that can and do disagree with
+# each other; this axis asks whether that disagreement costs ability.
+#
+# `includeRuntimeContext: false` additionally drops the dynamic context
+# snapshot, matching Minimal.
+#
+# `agent-instructions` is disabled separately because the AGENTS.md digest does
+# not arrive as a system section -- it is injected as a user-role context
+# message, so `complete: true` does not suppress it. This is the same injected
+# context dsh-anchored-standard strips during its bootstrap request.
+#
+# The tool CATALOG is untouched: this cell still shows all 25 tools. Verify
+# that in the header before trusting any result from it -- if tool_count moved,
+# this overlay leaked into axis A1 and the cell is void.
+#
+# `@deepseek-ai/dsh-persona` is NOT used here even though it is the plugin the
+# official Minimal preset uses. It hardcodes the `deployment:persona` section
+# name, which the SystemPrompt service already registers in its constructor, so
+# it only works on the agent plane where a scoped section shadows the global
+# one. A headless profile has no agent plane and the mount fails outright. The
+# local `dsh-ablation-prompt` reaches the same end state through a differently
+# named complete section.
+
+- id: agent-instructions
+  disabled: true
+
+- insert:
+    - id: ablation-persona
+      name: dsh-ablation-prompt
+      config:
+        text: You are a helpful software engineer assistant.
+        suppressRuntimeContext: true

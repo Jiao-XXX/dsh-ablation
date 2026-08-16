@@ -1,0 +1,35 @@
+# A2a -- drop the TOOL-USAGE half of Standard's prompt, keep everything else.
+#
+# Standard's 4441-character prompt splits into two blocks of comparable size:
+#
+#   identity + persona   222c   [harness identity, coding-agent persona]
+#   TOOL USAGE          1977c   read/write/edit/glob/grep/bash/jobs/web_search
+#   DELEGATION          2214c   goal/workflow/ralph/subagent/subagent_fork
+#
+# A2 established that removing ALL of it costs nothing in accuracy while cutting
+# reasoning tokens 2.4-3.2x across two tasks. This cell and A2b split that
+# result in half to find out WHICH prose the model is paying for -- the
+# difference between "prompts are expensive" (not actionable) and "this
+# specific kind of guidance is expensive" (actionable).
+#
+# The sections are blanked by shadowing, not by unmounting their plugins, so
+# all 25 tools stay in the catalog. Verify that in the header: tool_count must
+# still be 25. If it moved, this cell leaked into axis A1 and is void.
+#
+# Expected system_chars: roughly 4441 - 1977 = ~2460.
+
+- insert:
+    - id: ablation-shadow-toolguide
+      name: dsh-ablation-prompt
+      config:
+        complete: false
+        suppressRuntimeContext: false
+        shadowSections:
+          - tool:read
+          - tool:write
+          - tool:edit
+          - tool:glob
+          - tool:grep
+          - tool:bash
+          - tool:jobs
+          - tool:web_search

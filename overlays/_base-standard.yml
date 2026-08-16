@@ -1,0 +1,45 @@
+# Correct the bare `base + headless` composition into the official `standard`
+# agent preset. Applied to EVERY cell before the cell's own overlay.
+#
+# ── why this file exists ───────────────────────────────────────────────────
+#
+# The bare profile composes 25 model-facing tools, and the shipped `standard`
+# preset also composes 25. That coincidence was initially read as "the clean
+# headless profile already IS Standard", and it is wrong: the two catalogs
+# differ by a swap that leaves the count unchanged.
+#
+#   base has      str_replace_editor   (from `tool-str-replace-editor`)
+#   standard has  ask_user_question    (from `tool-ask-user`)
+#
+# The admission gate caught it by comparing tool NAME SETS and full schemas
+# against a real preset-composed session, which is the entire reason the gate
+# runs before the matrix rather than after it. A count check would have passed
+# this and every cell would have carried a mislabelled baseline.
+#
+# The third correction is a schema difference the gate found in `subagent_fork`:
+# base configures it `backgroundMode: one-shot`, the standard preset
+# `continuable`. That changes the tool's description text -- and therefore a
+# paragraph of the system prompt -- so leaving it would put a permanent,
+# unattributed delta into every cell.
+#
+# `config` is REPLACED wholesale by a patch, never deep-merged, so the two
+# fields that are not changing must be restated here.
+#
+# Deltas NOT corrected here are the Web-surface prompt sections (harness
+# checkout path, the Web GUI orientation paragraph, the clickable-file-
+# reference paragraph). Those come from `dsh-web-app`, which a headless profile
+# does not and should not mount; they are declared as accepted deltas in
+# bin/capture_references.py instead of being faked.
+
+- id: tool-str-replace-editor
+  disabled: true
+
+- id: tool-subagent-fork
+  config:
+    provider: fork
+    toolName: subagent_fork
+    backgroundMode: continuable
+
+- insert:
+    - id: tool-ask-user
+      name: '@deepseek-ai/dsh-tool-ask-user'

@@ -1,0 +1,33 @@
+# A2b -- drop the DELEGATION half of Standard's prompt, keep everything else.
+#
+# The complement of A2a. This removes the guidance about goal, workflow, ralph,
+# subagent and subagent_fork -- 2214 characters telling the model when to spawn
+# children, how to run background delegations, and when NOT to reach for a
+# Ralph loop -- while leaving the tool-usage prose and all 25 tools in place.
+#
+# This is the block worth suspecting first. Every paragraph in it describes
+# machinery for decomposing and delegating work, and the tasks under test need
+# none of it. If reading "use subagent in the background by default" makes the
+# model spend reasoning tokens weighing a delegation it will never perform,
+# that cost is pure overhead and a plugin can remove it without removing any
+# capability -- the tools stay callable, they just stop being advertised.
+#
+# A2a vs A2b is the whole point: whichever cell lands closer to A2's cost is
+# the block paying for it. If both land halfway, the cost is proportional to
+# prompt LENGTH rather than to content, which would be a duller but equally
+# publishable answer.
+#
+# Expected system_chars: roughly 4441 - 2214 = ~2230, and tool_count still 25.
+
+- insert:
+    - id: ablation-shadow-delegation
+      name: dsh-ablation-prompt
+      config:
+        complete: false
+        suppressRuntimeContext: false
+        shadowSections:
+          - tool:goal
+          - tool:workflow
+          - tool:ralph
+          - tool:subagent
+          - tool:subagent_fork

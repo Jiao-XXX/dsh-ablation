@@ -1,0 +1,51 @@
+# A5 -- filesystem-layer axis, held at the Minimal value.
+#
+# Standard reads and writes through the host sandbox provider plus an
+# observation policy that annotates results. Minimal uses a bare local
+# filesystem with no policy layer, reached only by `str_replace_editor`.
+#
+# This is the weakest of the five axes a priori -- it is included so that "we
+# checked" is literally true rather than a claim resting on plausibility. An
+# axis nobody expects to matter is exactly the kind that turns out to, and
+# leaving it out would make the remaining four unfalsifiable as a set.
+#
+# `tool-fs` and `tool-fs-search` carry read/write/edit/read_image/glob/grep, so
+# disabling them DOES move the catalog. That overlap with A1 is unavoidable --
+# it is the same overlap the official presets have -- and it means A5 must be
+# read as "Minimal's fs stack including its catalog consequence", never as a
+# pure fs-policy manipulation. The header makes the overlap visible rather than
+# letting it hide.
+#
+# The `fs` rows sit inside a group carrying `isolate: {fs: true}`, exactly as
+# the Minimal preset composes them. Without that realm `dsh-fs-local` publishes
+# `fs` into the root realm, where the host's `fs-sandbox` has already published
+# it, and the profile fails to boot with `service "fs" has been registered`.
+# `str_replace_editor` moves INTO the realm too -- left outside it would keep
+# editing through the host sandbox provider while claiming to be Minimal's
+# editor.
+
+- id: tool-fs
+  disabled: true
+- id: tool-fs-search
+  disabled: true
+- id: fs-observation-policy
+  disabled: true
+- id: tool-str-replace-editor
+  disabled: true
+
+- insert:
+    - id: ablation-filesystem
+      name: cordis:group
+      group: true
+      isolate:
+        fs: true
+      config:
+        - id: ablation-fs-local
+          name: '@deepseek-ai/dsh-fs-local'
+          config:
+            cwd: !!js process.env.DSH_CWD ?? process.cwd()
+
+        - id: ablation-str-replace-editor
+          name: '@deepseek-ai/dsh-tool-str-replace-editor'
+          config:
+            maxOutputChars: 16000
