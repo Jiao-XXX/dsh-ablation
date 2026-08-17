@@ -1,11 +1,17 @@
-# Experimental output. Runs are cheap to re-produce and expensive to review in
-# a diff; what belongs in the repository is the METHOD plus the one worked
-# example under docs/. A results tree in git also invites quietly amending a
-# published number, which is exactly what the pre-registration exists to stop.
-/results/*
-!/results/PREREGISTRATION-*.md
+# Raw run data IS committed, deliberately.
+#
+# The original rule here excluded it, on the reasoning that runs are cheap to
+# reproduce. That reasoning was wrong twice over: 56 runs of a reasoning model
+# cost real money, and this project is now shelved, so they will never be
+# reproduced. Every number in docs/REPORT.md comes out of these files -- with
+# them the report is auditable down to the individual run, without them it is
+# a set of assertions.
+#
+# The risk the old rule guarded against (quietly amending a published number)
+# is better handled by the fact that these files are now in git history: an
+# amendment shows up as a diff.
 
-# Per-run workspaces, recreated by the runner on every run.
+# Per-run workspaces: regenerated fixtures and scratch dirs, not evidence.
 /workspaces/
 
 # Captured reference sessions point at absolute paths in one machine's
